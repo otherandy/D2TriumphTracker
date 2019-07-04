@@ -10,8 +10,6 @@ import { User, UserInfo } from '../models/user';
   providedIn: 'root'
 })
 
-
-
 export class D2ApiService {
 
   public manifest: any;
@@ -25,7 +23,7 @@ export class D2ApiService {
   constructor(private http: HttpClient) { }
 
   searchUser(userInfo: UserInfo): Observable<User> {
-    let apiUrl: string = `${this.bungieUrl}/Destiny2/SearchDestinyPlayer/${userInfo.platform}/${userInfo.username}/`;
+    const apiUrl = `${this.bungieUrl}/Destiny2/SearchDestinyPlayer/${userInfo.platform}/${userInfo.username}/`;
     return this.http.get(apiUrl, this.httpOptions)
       .pipe(
         // Do some piping
@@ -34,22 +32,20 @@ export class D2ApiService {
             // Edit this later
             // Need to make sure the response is valid
             // Check the error codes and the like.
-            let response = data.Response;
+            const response = data.Response;
             /*
              * parse the "response" data from the api call
              * Grab only the user we searched for, no more than that.
              */
-            if (response.length === 0){
+            if (response.length === 0) {
               return null;
-            }
-            else if (response.length > 1) {
-              for (const item of response){
-                if(item.displayName === userInfo.username){
+            } else if (response.length > 1) {
+              for (const item of response) {
+                if (item.displayName === userInfo.username) {
                   return item;
                 }
               }
-            }
-            else {
+            } else {
               return response[0];
             }
           }
@@ -58,22 +54,21 @@ export class D2ApiService {
   }
 
   getTriumphsById(user: User): Observable<any> {
-    let apiUrl = `${this.bungieUrl}/Destiny2/${user.membershipType}/Profile/${user.membershipId}/?components=900`;
+    const apiUrl = `${this.bungieUrl}/Destiny2/${user.membershipType}/Profile/${user.membershipId}/?components=900`;
     return this.http.get(apiUrl, this.httpOptions)
       .pipe(
         map(
           (data: any) => {
             // placeholder
             let response;
-            //console.log(response);
+            // console.log(response);
             // DO STUFF
             try {
               response = data.Response;
-            }
-            catch (err) {
+            } catch (err) {
               response = null;
-            }
-            finally {
+            } finally {
+              // tslint:disable-next-line: no-unsafe-finally
               return response;
             }
           }

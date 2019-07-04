@@ -3,7 +3,7 @@ export class Triumph {
   description: string;                // Description of the triumph
   iconPath: string;                   // `https://www.bungie.net${icon}
   scoreValue: number;                 // Triumph's score value
-  state: stateMask;                   // Triumph state for visibility and completion
+  state: StateMask;                   // Triumph state for visibility and completion
   hash: string;                       // hash string of the current triumph
   objectives: Array<Objective> =
             new Array<Objective>();   // List of objectives for the Triumph
@@ -11,7 +11,7 @@ export class Triumph {
   get triumphComplete(): boolean {    // this verifies if the entire triumph is complete or not
     let complete = true;
     this.objectives.forEach((obj: Objective) => {
-      if(obj.completionValue > obj.progress){
+      if (obj.completionValue > obj.progress) {
         complete = false;
       }
     });
@@ -31,7 +31,7 @@ export class Objective {
   // complete: boolean;                  // This tells us if the objective is complete!
 
   get completionPercent(): number {
-    let percent = (this.progress / this.completionValue) * 100;
+    const percent = (this.progress / this.completionValue) * 100;
     return (percent > 100) ? 100 : percent;
   }
 }
@@ -42,9 +42,9 @@ enum valueStyle {                     // Visual representation of the progress S
   Milliseconds,
   Boolean,
   Decimal
-};
+}
 
-export class stateMask {              // Bit Mask representing a Triumph's state
+export class StateMask {              // Bit Mask representing a Triumph's state
   None: boolean;                      // Show as completed and unclaimed!
   RecordRedeemed: boolean;            // Show as completed and claimed!
   RewardUnavailable: boolean;         // This is unimportant to this application

@@ -18,16 +18,16 @@ export class TriumphHomeComponent implements OnInit {
   private manifest: any;
   public userSearchForm: FormGroup;
 
-  public loading: boolean = false;
+  public loading = false;
   public categorySelection: string;
   public subCategorySelection: string;
   public sectionSelection: string;
 
   platformOptions = [
     {name: 'XBL', value: 1},
-    {name: 'PSN', value: 2}//,
-    //{name: 'BNet', value: 4}
-  ]
+    {name: 'PSN', value: 2} // ,
+    // {name: 'BNet', value: 4}
+  ];
   //#endregion
 
   constructor(private route: ActivatedRoute,
@@ -36,7 +36,7 @@ export class TriumphHomeComponent implements OnInit {
               private tracker: TriumphTrackerService) { }
 
   ngOnInit() {
-    let resolvedData: any = this.route.snapshot.data['resolvedManifest'];
+    const resolvedData: any = this.route.snapshot.data.resolvedManifest;
     this.manifest = resolvedData;
 
     this.userSearchForm = this.formBuilder.group({
@@ -44,11 +44,11 @@ export class TriumphHomeComponent implements OnInit {
       username: ['']
     });
 
-    if(this.triumphService.userInformation) {
+    if (this.triumphService.userInformation) {
       this.userSearchForm.controls.platform.setValue(this.triumphService.userInformation.platform);
       this.userSearchForm.controls.username.setValue(this.triumphService.userInformation.username);
     }
-    //this.onSearchUser();
+    // this.onSearchUser();
   }
 
   /*
@@ -58,7 +58,7 @@ export class TriumphHomeComponent implements OnInit {
    * this will attempt to locate a user in the bungie api and grab all of their triumphs.
    */
   onSearchUser() {
-    let userSearchParameters: UserInfo = {
+    const userSearchParameters: UserInfo = {
       platform: this.userSearchForm.controls.platform.value,
       username: this.userSearchForm.controls.username.value
     };
@@ -68,7 +68,7 @@ export class TriumphHomeComponent implements OnInit {
     this.sectionSelection = undefined;
     this.triumphService.buildData(userSearchParameters).subscribe(
       (data: boolean) => {
-        if(data) {
+        if (data) {
           this.loading = false;
         }
       },
@@ -89,19 +89,20 @@ export class TriumphHomeComponent implements OnInit {
 
   setSubCategory(hash: string) {
     this.subCategorySelection = hash;
-    this.sectionSelection = this.triumphService.presentationNodeList[hash].children.presentationNodes[0];;
+    this.sectionSelection = this.triumphService.presentationNodeList[hash].children.presentationNodes[0];
     // console.log(`sub category has been selected: ${this.subCategorySelection}`);
     // console.log(`section has been selected: ${this.sectionSelection}`);
   }
 
   setSection(hash: string) {
     this.sectionSelection = hash;
-    //console.log(`section has been selected: ${this.sectionSelection}`);
+    // console.log(`section has been selected: ${this.sectionSelection}`);
   }
 
   trackTriumph(hash: string) {
     this.tracker.addTriumph(hash) ?
     console.log(`Added triumph ${hash} to tracked list.`) :
+    // tslint:disable-next-line: no-unused-expression
     null;
   }
 
@@ -114,7 +115,7 @@ export class TriumphHomeComponent implements OnInit {
    * e.g.: 500132154809 -> 500,132,154,809
    */
   formatNumber(num) {
-    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
   }
 
 }

@@ -6,10 +6,10 @@ import { Observable, of } from 'rxjs';
 import { D2ApiService } from './d2-api.service';
 import { ManifestService } from './manifest.service';
 
-import { UserInfo, User } from '../models/User';
+import { UserInfo, User } from '../models/user';
 import { PresentationNode, Children } from '../models/presentationNode';
 import { UserTriumphObjective, UserTriumph } from '../models/userTriumph';
-import { Objective, Triumph, stateMask } from '../models/triumph';
+import { Objective, Triumph, StateMask } from '../models/triumph';
 
 @Injectable({
   providedIn: 'root'
@@ -32,11 +32,10 @@ export class TriumphService {
     this.userInformation = userSearchParameters;
     return this.manifestService.returnManifest().pipe(
       flatMap((success: boolean) => {
-        if(success){
+        if (success) {
           return this.d2Api.searchUser(userSearchParameters);
-        }
-        else {
-          throw("Get Manifest Failed!");
+        } else {
+          throw new Error('Get Manifest Failed!');
         }
       }),
       flatMap((userData: User) => {
@@ -50,36 +49,35 @@ export class TriumphService {
   }
 
   updateData() {
-    if(this.userInformation) {
+    if (this.userInformation) {
       return this.buildData(this.userInformation);
-    }
-    else {
+    } else {
       console.log(`Error updating data. Either:\nNo User found or\nError with manifest.`);
       return of(false);
     }
   }
 
   testingState(userData: any) {
-    let stateArray = new Array<number>();
-    for(let profTriumphHash in userData.profileRecords.data.records) {
-      let state = userData.profileRecords.data.records[profTriumphHash].state;
-      if(!(stateArray.includes(state))) {
+    const stateArray = new Array<number>();
+    for (const profTriumphHash in userData.profileRecords.data.records) {
+      const state = userData.profileRecords.data.records[profTriumphHash].state;
+      if (!(stateArray.includes(state))) {
         console.log(`new state encountered: ${state}`);
         stateArray.push(state);
       }
     }
-    for(let characterHash in userData.characterRecords.data) {
-      for(let charTriumphHash in userData.characterRecords.data[characterHash].records) {
-        let state = userData.characterRecords.data[characterHash].records[charTriumphHash].state;
-        if(!(stateArray.includes(state))) {
+    for (const characterHash in userData.characterRecords.data) {
+      for (const charTriumphHash in userData.characterRecords.data[characterHash].records) {
+        const state = userData.characterRecords.data[characterHash].records[charTriumphHash].state;
+        if (!(stateArray.includes(state))) {
           console.log(`new state encountered: ${state}`);
           stateArray.push(state);
         }
       }
     }
-    let stateMaskDict = {};
-    for(let state of stateArray){
-      stateMaskDict[state] = new stateMask(state);
+    const stateMaskDict = {};
+    for (const state of stateArray) {
+      stateMaskDict[state] = new StateMask(state);
     }
     console.log(stateArray);
     console.log(stateMaskDict);
@@ -93,33 +91,33 @@ export class TriumphService {
    * dictionary stored as { hash: presentationNode }
    */
   createPresentationNodeList(userTriumphs: any) {
-    let presetNodeList = {};
+    const presetNodeList = {};
     this.fullTriumphList = {};
-    let rootNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash]);
+    const rootNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash]);
     // Root Node
     // Grab root's children (7 main triumph categories)
-    for(let category in this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash].children.presentationNodes) {
-      let categoryHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash].children.presentationNodes[category].presentationNodeHash;
-      let categoryNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash]);
-      //console.log(`ENTERING CATEGORY: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash].displayProperties.name}`);
+    for (const category in this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash].children.presentationNodes) {
+      const categoryHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[this.rootTriumphPresentationHash].children.presentationNodes[category].presentationNodeHash;
+      const categoryNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash]);
+      // console.log(`ENTERING CATEGORY: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash].displayProperties.name}`);
       // Grab children of main categories (sub categories)
-      for(let subCategory in this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash].children.presentationNodes) {
-        let subCategoryHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash].children.presentationNodes[subCategory].presentationNodeHash;
-        let subCategoryNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash]);
-        //console.log(`ENTERING SUB-CATEGORY: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].displayProperties.name}`);
+      for (const subCategory in this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash].children.presentationNodes) {
+        const subCategoryHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[categoryHash].children.presentationNodes[subCategory].presentationNodeHash;
+        const subCategoryNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash]);
+        // console.log(`ENTERING SUB-CATEGORY: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].displayProperties.name}`);
         // grab children of sub categories (sections)
-        for(let section in this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].children.presentationNodes) {
-          let sectionHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].children.presentationNodes[section].presentationNodeHash;
-          let sectionNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash]);
-          //console.log(`ENTERING SECTION: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].displayProperties.name}`)
-          if(this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].displayProperties.name !== 'Classified') {
+        for (const section in this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].children.presentationNodes) {
+          const sectionHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[subCategoryHash].children.presentationNodes[section].presentationNodeHash;
+          const sectionNode: PresentationNode = this.mapPresentationNode(this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash]);
+          // console.log(`ENTERING SECTION: ${this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].displayProperties.name}`)
+          if (this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].displayProperties.name !== 'Classified') {
             // grab children of sub sections (triumphs)
-            for(let triumph in this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records) {
-              let triumphHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records[triumph].recordHash;
-              let triumphGrabbed = this.makeTriumphObject(triumphHash, userTriumphs)
+            for (const triumph in this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records) {
+              const triumphHash = this.manifestService.manifest.DestinyPresentationNodeDefinition[sectionHash].children.records[triumph].recordHash;
+              const triumphGrabbed = this.makeTriumphObject(triumphHash, userTriumphs);
               this.fullTriumphList[triumphHash] = triumphGrabbed;
               sectionNode.children.records.push(triumphHash);
-              //console.log(`triumph ${subSubSubIndex}: `, this.this.manifestService.manifest.DestinyRecordDefinition[subSubSubHash]);
+              // console.log(`triumph ${subSubSubIndex}: `, this.this.manifestService.manifest.DestinyRecordDefinition[subSubSubHash]);
             }
           }
           subCategoryNode.children.presentationNodes.push(sectionHash);
@@ -142,8 +140,8 @@ export class TriumphService {
    * definition setup in this application to be used elsewhere.
    */
   mapPresentationNode(presentationNode: any): PresentationNode {
-    try{
-      let presentNode = new PresentationNode();
+    try {
+      const presentNode = new PresentationNode();
 
       // First we setup the display properties and assign them to our new node
       presentNode.hasIcon = presentationNode.displayProperties.hasIcon;
@@ -173,8 +171,7 @@ export class TriumphService {
        */
 
       return presentNode;
-    }
-    catch(err) {
+    } catch (err) {
       console.log(`ERROR: \n`, err);
     }
   }
@@ -186,7 +183,7 @@ export class TriumphService {
    * in order to build a triumph object.
    */
   makeTriumphObject(recordNodeHash: string, userTriumphs: any): Triumph {
-    let newTriumph: Triumph = new Triumph();
+    const newTriumph: Triumph = new Triumph();
     try {
       newTriumph.name = this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].displayProperties.name;
       newTriumph.description = this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].displayProperties.description;
@@ -194,19 +191,17 @@ export class TriumphService {
       newTriumph.scoreValue = this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].completionInfo.ScoreValue;
       newTriumph.hash = recordNodeHash;
 
-      if(this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].scope) {
+      if (this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash].scope) {
         // this is a character based triumph
         this.fillCharacterTriumphData(newTriumph, recordNodeHash, userTriumphs.characterRecords.data);
-      }
-      else {
+      } else {
         // this is a profile based triumph
         this.fillProfileTriumphData(newTriumph, recordNodeHash, userTriumphs.profileRecords.data.records);
       }
 
-      //console.log(newTriumph);
+      // console.log(newTriumph);
       return newTriumph;
-    }
-    catch(err) {
+    } catch (err) {
       console.log(`ERROR on triumph hash: ${recordNodeHash}\nLogging object below: \n`, this.manifestService.manifest.DestinyRecordDefinition[recordNodeHash]);
       console.log(err);
       return newTriumph;
@@ -221,12 +216,12 @@ export class TriumphService {
    * profile triumph.
    */
   fillProfileTriumphData(triumph: Triumph, recordHash: string, profileTriumphs: any) {
-    let userTriumph: UserTriumph = profileTriumphs[recordHash];
-    triumph.state = new stateMask(userTriumph.state);
+    const userTriumph: UserTriumph = profileTriumphs[recordHash];
+    triumph.state = new StateMask(userTriumph.state);
 
     userTriumph.objectives.forEach(userObjective => {
       //#region create Promise
-      let objectivePromise = this.mapObjective(userObjective);
+      const objectivePromise = this.mapObjective(userObjective);
 
       objectivePromise.then(
         (obj: Objective) => {
@@ -249,18 +244,18 @@ export class TriumphService {
    * character triumph.
    */
   fillCharacterTriumphData(triumph: Triumph, recordHash: string, characterTriumphs: any) {
-    let charArray = new Array<UserTriumph>();
-    //let userTriumph: UserTriumph;
-    //console.log(characterTriumphs);
-    for(let character in characterTriumphs){
+    const charArray = new Array<UserTriumph>();
+    // let userTriumph: UserTriumph;
+    // console.log(characterTriumphs);
+    for (const character in characterTriumphs) {
       charArray.push(characterTriumphs[character].records[recordHash]);
     }
-    //console.log(charArray);
-    let userTriumph = charArray[0];
+    // console.log(charArray);
+    const userTriumph = charArray[0];
 
     userTriumph.objectives.forEach(userObjective => {
       //#region create Promise
-      let objectivePromise = this.mapObjective(userObjective);
+      const objectivePromise = this.mapObjective(userObjective);
 
       objectivePromise.then(
         (obj: Objective) => {
@@ -284,22 +279,20 @@ export class TriumphService {
   mapObjective(userObjective: UserTriumphObjective): Promise<Objective> {
     return new Promise(
       (resolve, reject) => {
-        let newObjective = new Objective();
+        const newObjective = new Objective();
 
         try {
           newObjective.allowOvercompletion = this.manifestService.manifest.DestinyObjectiveDefinition[userObjective.objectiveHash].allowOvercompletion;
           newObjective.completionValue = userObjective.completionValue;
-          if(!newObjective.allowOvercompletion && (userObjective.progress > userObjective.completionValue)) {
+          if (!newObjective.allowOvercompletion && (userObjective.progress > userObjective.completionValue)) {
             newObjective.progress = userObjective.completionValue;
-          }
-          else{
+          } else {
             newObjective.progress = userObjective.progress;
           }
           newObjective.visible = userObjective.visible;
           newObjective.description = this.manifestService.manifest.DestinyObjectiveDefinition[userObjective.objectiveHash].progressDescription;
           resolve(newObjective);
-        }
-        catch (err) {
+        } catch (err) {
           reject(err);
         }
       }

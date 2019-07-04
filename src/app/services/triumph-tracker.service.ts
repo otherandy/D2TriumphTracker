@@ -9,19 +9,18 @@ export class TriumphTrackerService {
   public trackedTriumphList: Array<string>;
 
   constructor(private triumphService: TriumphService) {
-    if(!this.trackedTriumphList) {
+    if (!this.trackedTriumphList) {
       this.trackedTriumphList = new Array<string>();
-      console.log("initializing triumph tracker list.")
+      console.log('initializing triumph tracker list.');
     }
   }
 
   addTriumph(hash: string): boolean {
-    if(!this.trackedTriumphList.includes(hash)) {
+    if (!this.trackedTriumphList.includes(hash)) {
       this.trackedTriumphList.push(hash);
       return true;
-    }
-    else {
-      console.log("Triumph Already Tracked");
+    } else {
+      console.log('Triumph Already Tracked');
       return false;
     }
   }
@@ -38,11 +37,10 @@ export class TriumphTrackerService {
 
   removeTriumph(hash: string): boolean {
     try {
-      let index = this.trackedTriumphList.indexOf(hash);
+      const index = this.trackedTriumphList.indexOf(hash);
       this.trackedTriumphList.splice(index, 1);
       return true;
-    }
-    catch(err) {
+    } catch (err) {
       return false;
     }
   }
@@ -57,8 +55,8 @@ export class TriumphTrackerService {
   }
 
   logTriumphs() {
-    this.trackedTriumphList.forEach(hash =>{
+    this.trackedTriumphList.forEach(hash => {
       console.log(this.triumphService.fullTriumphList[hash]);
-    })
-  };
+    });
+  }
 }

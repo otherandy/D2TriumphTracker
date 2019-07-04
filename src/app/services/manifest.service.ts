@@ -6,7 +6,6 @@ import { of, Observable } from 'rxjs';
 import { Manifest } from '../models/manifest';
 
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -49,9 +48,9 @@ export class ManifestService {
     return this.getManifestUrl().pipe(
       retryWhen(errors => {
         return errors.pipe(
-          tap(() => console.log("error, retrying get manifest...")),
+          tap(() => console.log('error, retrying get manifest...')),
           delay(100)
-        )
+        );
       }),
       flatMap((url: string) => {
         return this.getManifestJSON(url).pipe(
@@ -68,16 +67,15 @@ export class ManifestService {
   }
 
   getManifestUrl() {
-    let apiUrl = `${this.bungieUrl}/Destiny2/Manifest/`;
+    const apiUrl = `${this.bungieUrl}/Destiny2/Manifest/`;
     return this.http.get(apiUrl, this.httpOptions).pipe(
       map( (data: any) => {
         let response: any;
         try {
           response = data.Response.jsonWorldContentPaths.en;
-          //console.log('Got Manifest URL')
+          // console.log('Got Manifest URL')
           return response;
-        }
-        catch (err) {
+        } catch (err) {
           console.log(`Error getting URL! \n${err}`);
           throw err;
         }
@@ -86,24 +84,22 @@ export class ManifestService {
   }
 
   getManifestJSON(url: string) {
-    if(url) {
-      let apiUrl = `https://www.bungie.net${url}`;
+    if (url) {
+      const apiUrl = `https://www.bungie.net${url}`;
       return this.http.get(apiUrl);
-    }
-    else{
-      console.log("invalid URL returned.")
+    } else {
+      console.log('invalid URL returned.');
     }
   }
 
   toManifest(response): Manifest {
     try {
-      let buildManifest: Manifest = new Manifest();
+      const buildManifest: Manifest = new Manifest();
       buildManifest.DestinyObjectiveDefinition = response.DestinyObjectiveDefinition;
       buildManifest.DestinyPresentationNodeDefinition = response.DestinyPresentationNodeDefinition;
       buildManifest.DestinyRecordDefinition = response.DestinyRecordDefinition;
       return buildManifest;
-    }
-    catch (err) {
+    } catch (err) {
       console.log(`Error while handling manifest data.\n${err}`);
       throw err;
     }
