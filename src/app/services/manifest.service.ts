@@ -5,6 +5,7 @@ import { of, Observable } from 'rxjs';
 
 import { Manifest } from '../models/manifest';
 
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class ManifestService {
   private readonly bungieUrl = 'https://www.bungie.net/Platform';
   private readonly httpOptions = {
     headers: new HttpHeaders({
-      'X-API-KEY': 'df0d5a0d48254ad9a9b8d17837efc8d1'
+      'X-API-KEY': environment.apiKey
     })
   };
   //#endregion
