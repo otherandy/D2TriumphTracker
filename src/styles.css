@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
-  --main-bg-color: #1e1c21;
+  --main-bg-color: #12171c;
   --main-text-color: white;
   --test-selected-color: #62eded;
   --completed-text-color: #f7c65b;
@@ -15,7 +15,6 @@ body {
 .min-padding {
   padding: 0 0.1rem !important;
 }
-
 
 .section-card {
   height: 3.5rem;
@@ -94,28 +93,23 @@ body {
   border: 1px solid var(--main-bg-color);
 }
 
-.completed-triumph {
+.completed-triumph {}
+
+.completed-triumph .triumph-title {
+  color: var(--completed-text-color) !important;
 }
 
-  .completed-triumph .triumph-title {
-    color: var(--completed-text-color) !important;
-  }
-
-  .completed-triumph .triumph-description {
-    color: var(--completed-muted-color) !important;
-  }
+.completed-triumph .triumph-description {
+  color: var(--completed-muted-color) !important;
+}
 
 .complete-objective {
   color: var(--completed-text-color) !important;
 }
 
-.complete-objective .progress {
+.complete-objective .progress {}
 
-}
-
-.complete-objective .progress-bar {
-
-}
+.complete-objective .progress-bar {}
 
 .incomplete-objective {
   color: var(--main-text-color) !important;

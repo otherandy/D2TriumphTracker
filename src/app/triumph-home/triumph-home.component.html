@@ -1,13 +1,14 @@
 <!-- Upper Portion of Screen -->
-<div class="container-fluid" style="background-color: #1e1c21;">
+<div class="container-fluid" style="background-color: #12171c;">
 
   <!-- User Search Form -->
+  <br />
   <h2>Please input your information, then click search!</h2>
   <form [formGroup]="userSearchForm" (ngSubmit)="onSearchUser()">
     <div class="row">
       <div class="col form-group">
         <label for="platform">Platform</label>
-        <select formControlName="platform" class="form-group" style="width: 100%;">
+        <select formControlName="platform" class="form-group custom-select" style="width: 100%;">
           <option *ngFor="let plat of platformOptions" [ngValue]="plat.value">{{ plat.name }}</option>
         </select>
       </div>
@@ -16,8 +17,8 @@
         <input type="text" formControlName="username" class="form-control" />
       </div>
       <div class="col form-group">
-        <br/>
-        <button class="btn btn-block btn-primary">search!</button>
+        <label for="search">&nbsp;</label>
+        <button formControlName="search" class="btn btn-block btn-primary">search!</button>
       </div>
     </div>
   </form>
