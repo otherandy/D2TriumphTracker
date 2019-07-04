@@ -9,7 +9,7 @@ import { TriumphService } from '../services/triumph.service';
 })
 export class TriumphTrackerComponent implements OnInit {
 
-  public loading = false;
+  public loading: boolean = false;
 
   constructor(public tracker: TriumphTrackerService,
               public triumphService: TriumphService) { }

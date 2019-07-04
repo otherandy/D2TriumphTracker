@@ -37,7 +37,7 @@ export class TriumphTrackerService {
 
   removeTriumph(hash: string): boolean {
     try {
-      const index = this.trackedTriumphList.indexOf(hash);
+      let index = this.trackedTriumphList.indexOf(hash);
       this.trackedTriumphList.splice(index, 1);
       return true;
     } catch (err) {

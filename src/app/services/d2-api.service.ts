@@ -24,7 +24,7 @@ export class D2ApiService {
   constructor(private http: HttpClient) { }
 
   searchUser(userInfo: UserInfo): Observable<User> {
-    const apiUrl = `${this.bungieUrl}/Destiny2/SearchDestinyPlayer/${userInfo.platform}/${userInfo.username}/`;
+    const apiUrl: string = `${this.bungieUrl}/Destiny2/SearchDestinyPlayer/${userInfo.platform}/${userInfo.username}/`;
     return this.http.get(apiUrl, this.httpOptions)
       .pipe(
         // Do some piping

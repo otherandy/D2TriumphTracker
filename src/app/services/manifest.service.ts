@@ -95,7 +95,7 @@ export class ManifestService {
 
   toManifest(response): Manifest {
     try {
-      const buildManifest: Manifest = new Manifest();
+      let buildManifest: Manifest = new Manifest();
       buildManifest.DestinyObjectiveDefinition = response.DestinyObjectiveDefinition;
       buildManifest.DestinyPresentationNodeDefinition = response.DestinyPresentationNodeDefinition;
       buildManifest.DestinyRecordDefinition = response.DestinyRecordDefinition;
